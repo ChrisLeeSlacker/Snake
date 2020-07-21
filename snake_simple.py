@@ -39,10 +39,16 @@ SNAKE_SPD = 15
 GAME_FONT = pygame.font.SysFont('freesansbold,ttf', 25)
 SCORE_FONT = pygame.font.SysFont('freesansbold,ttf', 35)
 
+# Score
+score, high_score = (0, 0)
+
 
 def theScore(score):
     """The Score Function"""
-    value = SCORE_FONT.render("Your Score: " + str(score), True, GREEN)
+    global high_score
+    if score > high_score:
+        high_score = score
+    value = SCORE_FONT.render(f'Score: {score} High Score: {high_score}', True, GREEN)
     dis.blit(value, [0, 0])
 
 
@@ -125,8 +131,11 @@ def gameLoop():
         current_pos_y1 += new_pos_y1
 
         dis.fill(BLACK)
+
+        # Draw the Food
         pygame.draw.rect(dis, RED, [food_x, food_y, SNAKE_BLK, SNAKE_BLK])
 
+        # Snake head
         snake_head = [current_pos_x1, current_pos_y1]
         snake_list.append(snake_head)
         if len(snake_list) > snake_size:
@@ -141,11 +150,11 @@ def gameLoop():
 
         pygame.display.update()
 
+        # Getting Food
         if current_pos_x1 == food_x and current_pos_y1 == food_y:
             food_x = round(random.randrange(0, dis_width - SNAKE_BLK) / 10.0) * 10.0
             food_y = round(random.randrange(0, dis_height - SNAKE_BLK) / 10.0) * 10.0
             snake_size += 1
-            print("+1")
 
         # Speed of the Snake
         fpsClock.tick(SNAKE_SPD)
