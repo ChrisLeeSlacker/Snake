@@ -1,13 +1,15 @@
 from Snake2 import *
 from training_data import genTrainingData
-
 from tensorflow import keras
 
 # Helper libraries
 import numpy as np
 
+# Display Size
 display_width = 600
 display_height = 500
+
+# Colors
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
