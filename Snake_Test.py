@@ -2,13 +2,13 @@
 import tensorflow as tf
 from Snake2 import *
 from keras.engine.saving import model_from_json
-from keras.backend import *
+from tensorflow.keras.backend import *
 
-config = tf.compat.v1.ConfigProto
-config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
-config.log_device_placement = True      # to log device placement (on which device the operation ran)
-sess = tf.compat.v1.Session(config=config)
-tf.compat.v1.keras.backend.set_session(sess) # set this TensorFlow session as the default session for Keras
+# config = tf.compat.v1.ConfigProto
+# tf.compat.v1.GPUOptions(allow_growth=True)          # dynamically grow the memory used on the GPU
+# config.log_device_placement = True                  # to log device placement (on which device the operation ran)
+# session = tf.compat.v1.Session(config=config)
+# tf.compat.v1.keras.backend.set_session(session)     # set this TensorFlow session as the default session for Keras
 
 
 def playGameWithML(model, display, fpsClock):
@@ -16,7 +16,7 @@ def playGameWithML(model, display, fpsClock):
     high_score = 3
     avg_score = 0
     test_games = 1000
-    steps_per_game = 2500
+    moves_per_game = 2500
 
     for _ in range(test_games):
         start, snake_pos, apple_pos, score = startPositions()
@@ -24,7 +24,7 @@ def playGameWithML(model, display, fpsClock):
         same_path_count = 0
         prev_path = 0
 
-        for _ in range(steps_per_game):
+        for _ in range(moves_per_game):
             path, is_front_blocked, is_left_blocked, is_right_blocked = noPath(
                 snake_pos)
             angle, snake_path, apple_path_norm, snake_path_norm = angleApple(
