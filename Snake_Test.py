@@ -4,11 +4,9 @@ from Snake2 import *
 from keras.engine.saving import model_from_json
 from tensorflow.keras.backend import *
 
-# config = tf.compat.v1.ConfigProto
-# tf.compat.v1.GPUOptions(allow_growth=True)          # dynamically grow the memory used on the GPU
-# config.log_device_placement = True                  # to log device placement (on which device the operation ran)
-# session = tf.compat.v1.Session(config=config)
-# tf.compat.v1.keras.backend.set_session(session)     # set this TensorFlow session as the default session for Keras
+with tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True)) as session:
+    tf.compat.v1.GPUOptions(allow_growth=True)          # dynamically grow the memory used on the GPU
+    tf.compat.v1.keras.backend.set_session(session)     # set this TensorFlow session as the default session for Keras
 
 
 def playGameWithML(model, display, fpsClock):
@@ -16,7 +14,7 @@ def playGameWithML(model, display, fpsClock):
     high_score = 3
     avg_score = 0
     test_games = 1000
-    moves_per_game = 2500
+    moves_per_game = 2000
 
     for _ in range(test_games):
         start, snake_pos, apple_pos, score = startPositions()
@@ -52,7 +50,7 @@ def playGameWithML(model, display, fpsClock):
             key_path = keyPath(new_path)
 
             next_step = snake_pos[0] + path
-            if OOB(snake_pos[0]) == 1 or suicide(next_step.tolist(), snake_pos) == 1:
+            if OOB(snake_pos[0]) == 1 or ownCollision(next_step.tolist(), snake_pos) == 1:
                 break
             snake_pos, apple_pos, score = playGame(start, snake_pos, apple_pos, key_path, score, display, fpsClock)
 

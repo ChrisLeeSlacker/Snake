@@ -1,12 +1,14 @@
 from Snake2 import *
 from training_data import genTrainingData
-from tensorflow import keras
+
+from keras.models import Sequential
+from keras.layers import Dense
 
 # Helper libraries
 import numpy as np
 
 # Display Size
-display_width = 600
+display_width = 500
 display_height = 500
 
 # Colors
@@ -22,6 +24,9 @@ pygame.init()
 display = pygame.display.set_mode((display_width, display_height))
 fpsClock = pygame.time.Clock()
 
+# Constants
+epochs_no = 5
+
 '''
 LEFT -> keyPath = 0
 RIGHT -> keyPath = 1
@@ -31,15 +36,15 @@ UP -> keyPath = 3
 
 training_data_x, training_data_y = genTrainingData(display, fpsClock)
 
-model = keras.Sequential([
-    keras.layers.Dense(units=9, input_dim=7),
-    keras.layers.Dense(units=15, activation='relu'),
-    keras.layers.Dense(output_dim=3, activation='softmax')
-])
+model = Sequential()
+model.add(Dense(units=9, input_dim=7),)
+model.add(Dense(units=15, activation='relu'),)
+model.add(Dense(3, activation='softmax'))
+
 
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 model.fit((np.array(training_data_x).reshape(-1, 7)), (np.array(training_data_y).reshape(-1, 3)), batch_size=256,
-          epochs=3)
+          epochs=epochs_no)
 
 model.save_weights('snake_model.h5')
 model_json = model.to_json()

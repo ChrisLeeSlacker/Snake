@@ -1,13 +1,12 @@
 """Snake Game"""
-
 # Main Import
 import pygame
-import numpy as np
-# Additional Imports
-from tqdm import tqdm
-import random
 import math
-import time
+# Additional Imports
+import random
+from tqdm import tqdm
+import numpy as np
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -19,27 +18,27 @@ GREEN = (0, 255, 0)
 
 def theSnake(snake_pos, display):
     """"Draw the Snake"""
-    for x in snake_pos:
-        pygame.draw.rect(display, BLUE, [x[0], x[1], 10, 10])
+    for pos in snake_pos:
+        pygame.draw.rect(display, BLUE, pygame.Rect(pos[0], pos[1], 10, 10))
 
 
-def theApple(display, apple_pos):
+def theApple(apple_pos, display):
     """Draw the Apple"""
-    pygame.draw.rect(display, (0, 255, 0), pygame.Rect(apple_pos[0], apple_pos[1], 10, 10))
-
-
-def distAppleSnake(apple_pos, snake_pos):
-    """Distance from Apple to Snake"""
-    return np.linalg.norm(np.array(apple_pos) - np.array(snake_pos[0]))
+    pygame.draw.rect(display, RED, pygame.Rect(apple_pos[0], apple_pos[1], 10, 10))
 
 
 def startPositions():
     """Define start position"""
     start = [100, 100]
     snake_pos = [[100, 100], [90, 100], [80, 100]]
-    apple_pos = [random.randrange(1, 60) * 10, random.randrange(1, 50) * 10]
+    apple_pos = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
     score = 3
     return start, snake_pos, apple_pos, score
+
+
+def distAppleSnake(apple_pos, snake_pos):
+    """Distance from Apple to Snake"""
+    return np.linalg.norm(np.array(apple_pos) - np.array(snake_pos[0]))
 
 
 def createSnake(start, snake_pos, apple_pos, key_path, score):
@@ -66,20 +65,20 @@ def createSnake(start, snake_pos, apple_pos, key_path, score):
 
 def getApple(apple_pos, score):
     """Get the apple"""
-    apple_pos = [random.randrange(1, 60) * 10, random.randrange(1, 50) * 10]
+    apple_pos = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
     score += 1
     return apple_pos, score
 
 
 def OOB(start):
     """Out of Bounds"""
-    if start[0] >= 600 or start[0] < 0 or start[1] >= 500 or start[1] < 0:
+    if start[0] >= 500 or start[0] < 0 or start[1] >= 500 or start[1] < 0:
         return 1
     else:
         return 0
 
 
-def suicide(start, snake_pos):
+def ownCollision(start, snake_pos):
     """Death by own body collision"""
     # start = snake_pos[0]
     if start in snake_pos[1:]:
@@ -92,51 +91,51 @@ def noPath(snake_pos):
     """Path is blocked"""
     path_vector = np.array(snake_pos[0]) - np.array(snake_pos[1])
 
-    left_path = np.array([path_vector[1], -path_vector[0]])
-    right_path = np.array([-path_vector[1], path_vector[0]])
+    left_path_vector = np.array([path_vector[1], -path_vector[0]])
+    right_path_vector = np.array([-path_vector[1], path_vector[0]])
 
     is_straight_blocked = pathBlocked(snake_pos, path_vector)
-    is_left_blocked = pathBlocked(snake_pos, left_path)
-    is_right_blocked = pathBlocked(snake_pos, right_path)
+    is_left_blocked = pathBlocked(snake_pos, left_path_vector)
+    is_right_blocked = pathBlocked(snake_pos, right_path_vector)
 
     return path_vector, is_straight_blocked, is_left_blocked, is_right_blocked
 
 
-def pathBlocked(snake_pos, path):
+def pathBlocked(snake_pos, path_vector):
     """Is the path_vector blocked"""
-    next_step = snake_pos[0] + path
+    next_step = snake_pos[0] + path_vector
     start = snake_pos[0]
-    if OOB(next_step) == 1 or suicide(next_step.tolist(), snake_pos) == 1:
+    if OOB(next_step) == 1 or ownCollision(next_step.tolist(), snake_pos) == 1:
         return 1
     else:
         return 0
 
 
-def randomPath(snake_pos, getApple):
+def randomPath(snake_pos, angleApple):
     """Generate a random path_vector to apple"""
     path = 0
-    if getApple > 0:
+    if angleApple > 0:
         path = 1
-    elif getApple < 0:
+    elif angleApple < 0:
         path = -1
     else:
         path = 0
 
-    return newPathVector(snake_pos, getApple, path)
+    return newPathVector(snake_pos, angleApple, path)
 
 
 def newPathVector(snake_pos, angleApple, path):
     """Vector for the path_vector from snake to apple"""
-    path_vector = np.array(snake_pos[0]) - np.array(snake_pos[1])
-    left_path = np.array([path_vector[1], -path_vector[0]])
-    right_path = np.array([-path_vector[1], path_vector[0]])
+    path_vector = np.array(snake_pos) - np.array(snake_pos[1])
+    left_path_vector = np.array([path_vector[1], -path_vector[0]])
+    right_path_vector = np.array([-path_vector[1], path_vector[0]])
 
     new_path = path_vector
 
     if path == -1:
-        new_path = left_path
+        new_path = left_path_vector
     if path == 1:
-        new_path = right_path
+        new_path = right_path_vector
 
     key_path = keyPath(new_path)
 
