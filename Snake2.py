@@ -33,6 +33,7 @@ def startPositions():
     snake_pos = [[100, 100], [90, 100], [80, 100]]
     apple_pos = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
     score = 3
+
     return start, snake_pos, apple_pos, score
 
 
@@ -80,7 +81,7 @@ def OOB(start):
 
 def ownCollision(start, snake_pos):
     """Death by own body collision"""
-    # start = snake_pos[0]
+    start = snake_pos[0]
     if start in snake_pos[1:]:
         return 1
     else:
@@ -177,7 +178,7 @@ def angleApple(snake_pos, apple_pos):
     return angle, snake_path, apple_path_norm, snake_path_norm
 
 
-def playGame(start, snake_pos, apple_pos, keyPath, score, display, fpsClock):
+def playGame(start, snake_pos, apple_pos, key_path, score, display, fpsClock):
     """Play Function"""
     crashed = False
     while crashed is not True:
@@ -189,9 +190,8 @@ def playGame(start, snake_pos, apple_pos, keyPath, score, display, fpsClock):
         theApple(apple_pos, display)
         theSnake(snake_pos, display)
 
-        snake_pos, apple_pos, score = createSnake(start, snake_pos, apple_pos, keyPath, score)
-        pygame.display.set_caption("SCORE: " + str(score))
+        snake_pos, apple_pos, score = createSnake(start, snake_pos, apple_pos, key_path, score)
+        pygame.display.set_caption(f'SCORE: {str(score)}')
         pygame.display.update()
         fpsClock.tick(50000)
-
         return snake_pos, apple_pos, score

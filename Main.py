@@ -25,22 +25,22 @@ display = pygame.display.set_mode((display_width, display_height))
 fpsClock = pygame.time.Clock()
 
 # Constants
-epochs_no = 5
+epochs_no = 3
 
 '''
-LEFT -> keyPath = 0
-RIGHT -> keyPath = 1
-DOWN ->keyPath = 2
-UP -> keyPath = 3
+LEFT -> key_path = 0
+RIGHT -> key_path = 1
+DOWN -> key_path = 2
+UP -> key_path = 3
 '''
 
 training_data_x, training_data_y = genTrainingData(display, fpsClock)
 
 model = Sequential()
 model.add(Dense(units=9, input_dim=7),)
+
 model.add(Dense(units=15, activation='relu'),)
 model.add(Dense(3, activation='softmax'))
-
 
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 model.fit((np.array(training_data_x).reshape(-1, 7)), (np.array(training_data_y).reshape(-1, 3)), batch_size=256,

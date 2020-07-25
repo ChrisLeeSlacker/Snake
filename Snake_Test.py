@@ -23,15 +23,13 @@ def playGameWithML(model, display, fpsClock):
         prev_path = 0
 
         for _ in range(moves_per_game):
-            path, is_front_blocked, is_left_blocked, is_right_blocked = noPath(
-                snake_pos)
-            angle, snake_path, apple_path_norm, snake_path_norm = angleApple(
-                snake_pos, apple_pos)
+            path_vector, is_straight_blocked, is_left_blocked, is_right_blocked = noPath(snake_pos)
+            angle, snake_path, apple_path_norm, snake_path_norm = angleApple(snake_pos, apple_pos)
 
             predictions = []
             """Predictions"""
             pre_path = np.argmax(np.array(model.predict(np.array(
-                [is_left_blocked, is_front_blocked, is_right_blocked,
+                [is_left_blocked, is_straight_blocked, is_right_blocked,
                  apple_path_norm[0], snake_path_norm[0],
                  apple_path_norm[1], snake_path_norm[1]]).reshape(-1, 7)))) - 1
 
@@ -49,7 +47,7 @@ def playGameWithML(model, display, fpsClock):
 
             key_path = keyPath(new_path)
 
-            next_step = snake_pos[0] + path
+            next_step = snake_pos[0] + path_vector
             if OOB(snake_pos[0]) == 1 or ownCollision(next_step.tolist(), snake_pos) == 1:
                 break
             snake_pos, apple_pos, score = playGame(start, snake_pos, apple_pos, key_path, score, display, fpsClock)
@@ -67,7 +65,7 @@ loaded_json_model = json_file.read()
 model = model_from_json(loaded_json_model)
 model.load_weights('snake_model.h5')
 
-display_width = 600
+display_width = 500
 display_height = 500
 
 pygame.init()
